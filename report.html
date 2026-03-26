@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#e63462" />
+  <title>Bus Tracker - รายงานปัญหา</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+<header id="site-header" class="sticky-top"></header>
+
+<main class="container-xl px-3 py-4">
+  <div class="mx-auto" style="max-width:720px">
+
+    <div id="report-success" class="success-box" style="display:none">
+      <div class="success-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h2 class="fw-bold fs-4">ส่งรายงานเรียบร้อยแล้ว!</h2>
+      <p class="text-muted">ขอบคุณที่แจ้งปัญหา ทีมงานจะดำเนินการแก้ไขโดยเร็ว</p>
+    </div>
+
+    <div id="report-form">
+      <div class="card border rounded-4 p-3 mb-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="card-icon" style="background:rgba(230,52,98,0.1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e63462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div><div class="fw-bold fs-5">รายงานปัญหา</div><div class="text-muted small">แจ้งปัญหาเพื่อให้ทีมงานดำเนินการแก้ไข</div></div>
+        </div>
+        <div class="mb-3">
+          <div class="fw-semibold mb-2">ประเภทปัญหา <span style="color:var(--pink)">*</span></div>
+          <div class="row g-2" id="problem-grid"></div>
+        </div>
+        <div class="mb-3">
+          <label class="fw-semibold mb-2 d-block">จุดจอดที่เกี่ยวข้อง (ถ้ามี)</label>
+          <select id="report-stop" class="form-select rounded-3"><option value="">เลือกจุดจอด...</option></select>
+        </div>
+        <div class="mb-3">
+          <div class="fw-semibold mb-2">รถเมล์ที่เกี่ยวข้อง (ถ้ามี)</div>
+          <div class="d-flex flex-wrap gap-2" id="bus-select-row"></div>
+        </div>
+        <div>
+          <label class="fw-semibold mb-2 d-block">รายละเอียดปัญหา <span style="color:var(--pink)">*</span></label>
+          <textarea id="report-desc" class="form-control rounded-3" rows="4" placeholder="โปรดอธิบายปัญหาที่พบอย่างละเอียด..."></textarea>
+        </div>
+      </div>
+
+      <div class="card border rounded-4 p-3 mb-3">
+        <div class="fw-semibold mb-3">ข้อมูลติดต่อ (ไม่บังคับ)</div>
+        <div class="mb-3">
+          <label class="form-label text-muted small d-flex align-items-center gap-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            ชื่อ-นามสกุล
+          </label>
+          <input type="text" id="report-name" class="form-control rounded-3" placeholder="กรอกชื่อของคุณ" />
+        </div>
+        <div>
+          <label class="form-label text-muted small d-flex align-items-center gap-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 4.9 2 2 0 0 1 3.6 2.72h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.1a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 17.5z"/></svg>
+            เบอร์โทรศัพท์
+          </label>
+          <input type="tel" id="report-phone" class="form-control rounded-3" placeholder="0XX-XXX-XXXX" />
+        </div>
+      </div>
+
+      <button class="submit-btn mb-3" id="submit-btn" disabled onclick="submitReport()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        ส่งรายงาน
+      </button>
+
+      <div class="d-flex gap-2 p-3 rounded-4" style="background:#FFEBEE">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e63462" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="color:#795548"><span class="fw-bold" style="color:var(--pink)">หมายเหตุ: </span>ข้อมูลที่คุณส่งจะถูกใช้เพื่อปรับปรุงระบบเท่านั้น หากเป็นกรณีฉุกเฉิน โปรดติดต่อเจ้าหน้าที่โดยตรงที่ Tel: 034-xxx-xxx</span>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer id="site-footer" class="border-top bg-white py-4 text-center"></footer>
+
+<script src="shared.js"></script>
+<script>
+/**
+ * report.html (หน้ารายงานปัญหา)
+ * ฟอร์มให้ผู้ใช้แจ้งปัญหาเกี่ยวกับรถเมล์
+ * ต้องเลือกประเภทปัญหาและกรอกรายละเอียดก่อนจึงจะส่งได้
+ * หลังส่งสำเร็จจะแสดง success state 3 วินาที แล้ว reset ฟอร์ม
+ */
+
+/**
+ * ประเภทปัญหาที่ผู้ใช้เลือกได้
+ * id ใช้เป็น key สำหรับ DOM element และ state tracking
+ */
+const problemTypes = [
+  {id:"late",     label:"รถเมล์มาช้า",           icon:"⏰"},
+  {id:"crowded",  label:"รถเมล์คนเยอะมาก",        icon:"👥"},
+  {id:"broken",   label:"รถเมล์เสีย",             icon:"🔧"},
+  {id:"noise",    label:"สิ่งอำนวยความสะดวกเสีย", icon:"🔊"},
+  {id:"safety",   label:"ปัญหาความปลอดภัย",       icon:"🛡️"},
+  {id:"clean",    label:"ความสะอาด",              icon:"✨"},
+  {id:"behavior", label:"พฤติกรรมคนขับ",          icon:"👤"},
+  {id:"other",    label:"อื่นๆ",                  icon:"•••"},
+];
+/** สีประจำรถแต่ละคันสำหรับปุ่มเลือกรถในฟอร์ม */
+const busColors = {1:'#E53935', 2:'#F9A825', 3:'#7B1FA2'};
+
+/** ประเภทปัญหาที่เลือกอยู่ (null = ยังไม่เลือก) */
+let selectedProblem = null;
+/** id รถที่เลือกอยู่ (null = ยังไม่เลือก) */
+let selectedBusReport = null;
+
+/**
+ * สร้าง UI ของฟอร์มทั้งหมด:
+ *   - problem-grid: ปุ่มเลือกประเภทปัญหา
+ *   - report-stop: dropdown จุดจอดจาก stops[]
+ *   - bus-select-row: ปุ่มเลือกรถ
+ *   - ผูก event listener กับ textarea เพื่อ enable/disable ปุ่มส่ง
+ */
+function buildReport() {
+  document.getElementById('problem-grid').innerHTML = problemTypes.map(pt =>
+    `<div class="col-6 col-sm-3"><button class="prob-btn" id="prob-${pt.id}" onclick="selectProblem('${pt.id}')">${pt.icon} ${pt.label}</button></div>`
+  ).join('');
+
+  const rs = document.getElementById('report-stop');
+  stops.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.name; rs.appendChild(o); });
+
+  document.getElementById('bus-select-row').innerHTML = [1,2,3].map(id =>
+    `<button class="bus-sel-btn" id="busrep-${id}" onclick="selectBusReport(${id})">
+      <div class="bus-icon-wrap" style="background:${busColors[id]}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div><div class="fw-semibold small">รถเมล์ที่ ${id}</div><div class="text-muted" style="font-size:0.75rem">รถคัน ${id}</div></div>
+    </button>`
+  ).join('');
+
+  document.getElementById('report-desc').addEventListener('input', checkSubmit);
+}
+
+/**
+ * เลือกประเภทปัญหา - toggle active class และ update selectedProblem
+ * @param {string} id - id ของประเภทปัญหาที่เลือก
+ */
+function selectProblem(id) {
+  selectedProblem = id;
+  document.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('prob-' + id).classList.add('selected');
+  checkSubmit();
+}
+/**
+ * เลือก/ยกเลิกรถที่เกี่ยวข้อง (toggle)
+ * คลิกซ้ำที่รถเดิม = ยกเลิกการเลือก
+ * @param {number} id - หมายเลขรถ (1-3)
+ */
+function selectBusReport(id) {
+  selectedBusReport = (selectedBusReport === id) ? null : id;
+  document.querySelectorAll('.bus-sel-btn').forEach(b => b.style.borderColor = '#e5e7eb');
+  if (selectedBusReport) document.getElementById('busrep-' + selectedBusReport).style.borderColor = busColors[selectedBusReport];
+}
+/**
+ * ตรวจสอบว่าฟอร์มพร้อมส่งหรือยัง
+ * เงื่อนไข: ต้องเลือกประเภทปัญหา AND กรอกรายละเอียด
+ * ถ้าครบจะ enable ปุ่มส่ง
+ */
+function checkSubmit() {
+  document.getElementById('submit-btn').disabled = !(selectedProblem && document.getElementById('report-desc').value.trim());
+}
+/**
+ * ส่งรายงาน (จำลอง - ไม่มี API จริง)
+ * ซ่อนฟอร์ม → แสดง success state → รอ 3 วินาที → reset ทุกอย่าง
+ */
+function submitReport() {
+  document.getElementById('report-form').style.display = 'none';
+  document.getElementById('report-success').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('report-success').style.display = 'none';
+    document.getElementById('report-form').style.display = 'block';
+    selectedProblem = null; selectedBusReport = null;
+    document.querySelectorAll('.prob-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.bus-sel-btn').forEach(b => b.style.borderColor = '#e5e7eb');
+    ['report-desc','report-name','report-phone'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('report-stop').value = '';
+    document.getElementById('submit-btn').disabled = true;
+  }, 3000);
+}
+
+renderLayout('report', 'รายงานปัญหา');
+renderFooter();
+buildReport();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

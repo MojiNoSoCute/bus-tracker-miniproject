@@ -1,0 +1,403 @@
+/**
+ * shared.css
+ * Stylesheet หลักที่ใช้ร่วมกันทุกหน้า
+ * โหลดหลัง Bootstrap 5 เพื่อ override และเพิ่ม custom styles
+ *
+ * โครงสร้าง:
+ *   1. CSS Variables (สีหลัก)
+ *   2. Base
+ *   3. Header & Top Bar
+ *   4. Navigation Tabs
+ *   5. Card Components
+ *   6. Bus Cards (หน้า tracking)
+ *   7. SVG Map (หน้า tracking)
+ *   8. Stop Timeline (หน้า tracking)
+ *   9. Schedule Table (หน้า schedule)
+ *  10. Stop Info Cards (หน้า stops)
+ *  11. Report Form (หน้า report)
+ *  12. Animations
+ */
+
+/* =============================================================
+   1. CSS VARIABLES
+   กำหนดสีหลักของระบบ ใช้ผ่าน var(--name) ทั่วทั้งโปรเจกต์
+   ============================================================= */
+:root {
+  --pink: #e63462;       /* สีหลัก - ใช้กับ header, active nav, accent */
+  --pink2: #fe5196;      /* สีหลักรอง - ใช้ใน gradient คู่กับ --pink */
+  --pink-light: #FFF0F3; /* พื้นหลังอ่อนสำหรับ row ตาราง */
+  --green: #4CAF50;      /* สีสถานะปกติ / live badge */
+  --orange: #FF9800;     /* สีเตือน / หมายเหตุ */
+  --cyan: #26C6DA;       /* สีเส้นทางบนแผนที่ */
+  --red: #E53935;        /* สีสถานะผิดปกติ */
+  --yellow: #F9A825;     /* สีรถคันที่ 2 */
+  --purple: #7B1FA2;     /* สีรถคันที่ 3 */
+}
+
+/* =============================================================
+   2. BASE
+   ============================================================= */
+body {
+  font-family: 'Noto Sans Thai', sans-serif;
+  background: #f9fafb; /* พื้นหลังเทาอ่อนทั้งหน้า */
+}
+
+/* =============================================================
+   3. HEADER & TOP BAR
+   ============================================================= */
+
+/* แถบสีบนสุด - gradient จาก --pink ไป --pink2 */
+.top-bar { background: linear-gradient(to right, var(--pink), var(--pink2)); }
+
+/* กล่องโลโก้รถเมล์ มุมซ้ายของ header */
+.logo-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.2); /* พื้นขาวโปร่งใส */
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Badge "LIVE" สีเขียว แสดงสถานะ real-time */
+.live-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green);
+  border-radius: 999px; /* pill shape */
+  padding: 4px 12px;
+  font-size: 0.875rem; font-weight: 700; color: #fff;
+}
+
+/* จุดกระพริบใน live badge */
+.live-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%; background: #fff;
+  animation: pulse 1.5s infinite; /* กระพริบด้วย keyframe pulse */
+}
+
+/* นาฬิกาดิจิทัลมุมขวาของ header */
+#clock {
+  font-size: 2.2rem; font-weight: 800;
+  font-variant-numeric: tabular-nums; /* ตัวเลขความกว้างคงที่ ไม่กระตุกเมื่อเปลี่ยน */
+}
+
+/* =============================================================
+   4. NAVIGATION TABS
+   แถบ nav ด้านล่าง header มี 4 ปุ่ม
+   ============================================================= */
+
+/* ปุ่ม nav แต่ละปุ่ม - ใช้ <a> tag จริงเพื่อ navigation ระหว่างหน้า */
+.tab-btn {
+  flex: 1; /* แบ่งพื้นที่เท่ากันทุกปุ่ม */
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 12px;
+  border: none; border-bottom: 3px solid transparent; /* เส้นใต้ปุ่ม (ซ่อนอยู่) */
+  background: none; cursor: pointer;
+  font-family: inherit; font-size: 1rem; font-weight: 500; color: #6b7280;
+  transition: color 0.2s, border-color 0.2s;
+  text-decoration: none; /* ลบ underline ของ <a> */
+}
+
+/* ปุ่มที่ active - แสดงเส้นใต้สีชมพู */
+.tab-btn.active { border-bottom-color: var(--pink); color: var(--pink); }
+
+/* hover state สำหรับปุ่มที่ไม่ active */
+.tab-btn:hover:not(.active) { color: #111827; }
+
+/* icon SVG ในปุ่ม nav */
+.tab-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+
+/* ซ่อน label บนหน้าจอเล็ก แสดงเฉพาะ icon */
+.tab-label { display: none; }
+@media(min-width: 480px) { .tab-label { display: inline; } }
+
+/* =============================================================
+   5. CARD COMPONENTS
+   ============================================================= */
+
+/* icon สี่เหลี่ยมมุมโค้งในหัว card */
+.card-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* =============================================================
+   6. BUS CARDS (index.html - หน้าติดตามสด)
+   Card แสดงข้อมูลรถแต่ละคัน
+   ============================================================= */
+
+/* กรอบ card รถ - border-color กำหนดผ่าน inline style ตามสีรถ */
+.bus-card { border-radius: 16px; border: 2px solid; overflow: hidden; }
+
+/* ส่วนหัว card - พื้นหลังสีรถ */
+.bus-card-head {
+  padding: 16px 20px; color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bus-card-head h3 { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; margin: 0; }
+
+/* badge สถานะ (จอดอยู่ / ความเร็ว) มุมขวาของหัว card */
+.status-badge {
+  display: flex; align-items: center; gap: 6px;
+  border-radius: 999px; padding: 6px 14px;
+  font-size: 0.875rem; background: rgba(255,255,255,0.2); color: #fff;
+}
+
+/* กล่องแสดงชื่อจุดจอดปัจจุบัน */
+.info-box { border-radius: 12px; padding: 12px 16px; }
+
+/* ชื่อจุดจอดในกล่อง info */
+.stop-name { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+/* แถวแสดงเวลาจอดที่เหลือ */
+.dwell-row {
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 12px; padding: 10px 16px;
+}
+
+/* timer นับถอยหลังเวลาจอด - ใช้ monospace เพื่อไม่ให้กระตุก */
+.dwell-timer {
+  font-family: monospace; font-size: 1rem; font-weight: 700;
+  color: #fff; border-radius: 8px; padding: 6px 14px;
+}
+
+/* แถวแสดงจุดจอดถัดไปและ ETA */
+.next-row {
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 12px; background: #f3f4f6; padding: 10px 16px;
+}
+
+/* แถวสถิติ (ผู้โดยสาร, แบตเตอรี่) */
+.stat-row { display: flex; align-items: center; gap: 10px; }
+.stat-label { font-size: 0.9rem; color: #6b7280; }
+.stat-val { margin-left: auto; font-size: 0.9rem; font-weight: 500; }
+
+/* progress bar container */
+.progress-wrap {
+  flex: 1; height: 10px;
+  border-radius: 999px; background: #f3f4f6; overflow: hidden;
+}
+
+/* progress bar fill - width และ background กำหนดผ่าน inline style */
+.progress-bar-custom { height: 100%; border-radius: 999px; transition: width 1s; }
+
+/* แถวสถานะด้านล่าง card */
+.status-row {
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 12px; background: #f3f4f6; padding: 10px 20px;
+}
+
+/* pill สถานะ (จอดรับผู้โดยสาร / กำลังเดินทาง) */
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  border-radius: 999px; padding: 6px 16px;
+  font-size: 0.875rem; font-weight: 500; color: #fff;
+}
+
+/* =============================================================
+   7. SVG MAP (index.html)
+   ============================================================= */
+
+/* SVG แผนที่ - responsive, ความสูงขั้นต่ำ 350px */
+#map-svg { width: 100%; height: auto; min-height: 350px; }
+
+/* จุดสีในคำอธิบายแผนที่ (legend) */
+.legend-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem; color: #fff; flex-shrink: 0;
+}
+
+/* =============================================================
+   8. STOP TIMELINE (index.html)
+   Grid แสดงสถานะรถที่แต่ละจุดจอด
+   ============================================================= */
+
+/* Grid responsive: 2 คอลัมน์ → 3 → 5 ตามขนาดหน้าจอ */
+.stop-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+@media(min-width: 640px) { .stop-grid { grid-template-columns: repeat(3, 1fr); } }
+@media(min-width: 900px) { .stop-grid { grid-template-columns: repeat(5, 1fr); } }
+
+/* card จุดจอดแต่ละจุด */
+.stop-card { border-radius: 12px; border: 2px solid; overflow: hidden; }
+
+/* หัว card จุดจอด - พื้นหลังเปลี่ยนตามสถานะ (มีรถจอด/ไม่มี) */
+.stop-card-head { padding: 10px 14px; color: #fff; display: flex; align-items: center; gap: 8px; }
+
+/* badge รหัสจุดจอด (P1-P10) */
+.stop-code-badge {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+}
+
+/* ชื่อจุดจอด - truncate ถ้ายาวเกิน */
+.stop-name-text {
+  font-size: 0.875rem; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* body ของ card จุดจอด */
+.stop-card-body { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+/* กล่องแสดงข้อมูลรถที่จอดอยู่ */
+.dwelling-info { border-radius: 8px; padding: 8px 10px; }
+
+/* badge หมายเลขรถ (วงกลมสี) */
+.bus-num-badge {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+
+/* timer ขนาดเล็กในการ์ดจุดจอด */
+.dwell-mini-timer {
+  font-family: monospace; font-size: 0.875rem; font-weight: 700;
+  color: #fff; border-radius: 6px; padding: 3px 10px;
+}
+
+/* แถว ETA รถที่กำลังจะมาถึง */
+.eta-row {
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 8px; background: #f3f4f6; padding: 6px 10px;
+}
+
+/* ข้อความเมื่อไม่มีข้อมูลรถ */
+.no-bus { font-size: 0.8rem; color: #6b7280; text-align: center; padding: 8px 0; }
+
+/* =============================================================
+   9. SCHEDULE TABLE (schedule.html)
+   ตารางเวลาออกจากแต่ละจุดจอด
+   ============================================================= */
+
+/* wrapper สำหรับ horizontal scroll บนมือถือ */
+.table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #e5e7eb; }
+
+/* ตารางเวลา - min-width เพื่อให้ column ไม่แคบเกินไป */
+.sched-table { width: 100%; min-width: 850px; border-collapse: collapse; font-size: 0.875rem; }
+
+/* header row - พื้นหลังสีชมพู */
+.sched-table thead tr th {
+  background: var(--pink); color: #fff;
+  padding: 10px 12px; border-right: 1px solid #d42d56;
+}
+.sched-table thead tr th:last-child { border-right: none; }
+
+/* สลับสีแถว even/odd เพื่อให้อ่านง่าย */
+.sched-table tbody tr:nth-child(even) { background: var(--pink-light); }
+.sched-table tbody tr:nth-child(odd)  { background: #fff; }
+
+.sched-table tbody td { padding: 10px 12px; border-right: 1px solid #e5e7eb; text-align: center; }
+/* คอลัมน์แรก (เวลาออก) - ชิดซ้าย, ตัวหนา, สีชมพู */
+.sched-table tbody td:first-child { text-align: left; font-weight: 700; color: var(--pink); }
+.sched-table tbody td:last-child { border-right: none; }
+
+/* =============================================================
+   10. STOP INFO CARDS (stops.html)
+   Card แสดงรายละเอียดแต่ละจุดจอด
+   ============================================================= */
+
+.stop-info-card { border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden; background: #fff; }
+
+/* หัว card - gradient สีตามกลุ่มจุดจอด */
+.stop-info-head { padding: 16px 20px; color: #fff; display: flex; align-items: center; gap: 14px; }
+
+/* badge หมายเลขจุดจอด (วงกลมขาวโปร่งใส) */
+.stop-num-badge {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1rem; flex-shrink: 0;
+}
+
+/* รหัสจุดจอดขนาดใหญ่ (P1-P10) */
+.stop-code-big { font-size: 2rem; font-weight: 800; }
+
+/* badge สิ่งอำนวยความสะดวก - pill สี */
+.fac-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  border-radius: 999px; padding: 5px 12px;
+  font-size: 0.75rem; font-weight: 500; color: #fff;
+}
+
+/* กล่องแสดงพิกัด X/Y */
+.coord-box { background: #f3f4f6; border-radius: 10px; padding: 10px; text-align: center; }
+.coord-axis { font-size: 0.75rem; color: #6b7280; }
+.coord-val { font-size: 1.1rem; font-weight: 700; }
+
+/* =============================================================
+   11. REPORT FORM (report.html)
+   ฟอร์มแจ้งปัญหา
+   ============================================================= */
+
+/* ปุ่มเลือกประเภทปัญหา */
+.prob-btn {
+  display: flex; align-items: center; gap: 8px;
+  border-radius: 12px; border: 2px solid #e5e7eb;
+  background: #fff; padding: 14px; cursor: pointer;
+  font-family: inherit; font-size: 0.875rem; font-weight: 500; color: #111827;
+  transition: all 0.2s; text-align: left; width: 100%;
+}
+/* สถานะเลือกแล้ว */
+.prob-btn.selected { border-color: var(--pink); background: rgba(230,52,98,0.05); color: var(--pink); }
+.prob-btn:hover:not(.selected) { border-color: rgba(230,52,98,0.3); background: #f3f4f6; }
+
+/* ปุ่มเลือกรถที่เกี่ยวข้อง */
+.bus-sel-btn {
+  display: flex; align-items: center; gap: 8px;
+  border-radius: 12px; border: 2px solid #e5e7eb;
+  background: #fff; padding: 10px 16px; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+
+/* icon วงกลมสีรถในปุ่มเลือกรถ */
+.bus-icon-wrap { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+/* ปุ่มส่งรายงาน - gradient สีชมพู, เต็มความกว้าง */
+.submit-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  border-radius: 16px;
+  background: linear-gradient(to right, var(--pink), var(--pink2));
+  border: none; padding: 16px 24px;
+  font-family: inherit; font-size: 1.05rem; font-weight: 700; color: #fff;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.submit-btn:hover:not(:disabled) { opacity: 0.9; }
+/* สถานะ disabled - ก่อนเลือกประเภทปัญหาและกรอกรายละเอียด */
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* กล่องแสดงผลสำเร็จหลังส่งรายงาน */
+.success-box {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  border-radius: 16px; border: 1px solid #e5e7eb; background: #fff;
+  padding: 64px 24px; text-align: center;
+}
+
+/* icon วงกลมสีเขียวในหน้าสำเร็จ */
+.success-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(76,175,80,0.1);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Override Bootstrap focus ring ให้ใช้สีชมพูของระบบ */
+.form-control:focus, .form-select:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 1px var(--pink);
+}
+
+/* =============================================================
+   12. ANIMATIONS
+   ============================================================= */
+
+/* pulse: กระพริบ opacity สำหรับ live-dot และ indicator ต่างๆ */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ping: ขยายวงกลมออกแล้วหายไป ใช้กับ indicator รถที่กำลังเคลื่อนที่ */
+@keyframes ping { 0%{transform:scale(1);opacity:0.75} 75%,100%{transform:scale(2);opacity:0} }
+
+.animate-pulse { animation: pulse 1.5s infinite; }
+.ping { animation: ping 1.2s cubic-bezier(0,0,0.2,1) infinite; }
